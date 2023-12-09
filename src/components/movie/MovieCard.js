@@ -1,7 +1,6 @@
 import React from 'react';
 
 const MovieCard = ({ movie }) => {
-    console.log("🚀 ~ file: MovieCard.js:4 ~ MovieCard ~ movie:", movie)
     const {
         title, release_date, vote_average, poster_path
     } = movie
