@@ -10,8 +10,12 @@
 
 @layer components {
     .page-container {
-        max-width: 1200px;
+        max-width: 1250px;
         margin-right: auto;
         margin-left: auto;
+    }
+    .movies .swiper-slide {
+        width: 300px;
+        height: auto;
     }
 }
