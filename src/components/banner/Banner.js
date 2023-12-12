@@ -10,7 +10,6 @@ const Banner = () => {
         fetcher
     );
     const banners = data?.results || []
-    console.log("🚀 ~ file: Banner.js:11 ~ Banner ~ banners:", banners)
     return (
         <section className='banner h-[500px] page-container'>
             <Swiper

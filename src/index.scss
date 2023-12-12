@@ -4,7 +4,7 @@
 
 @layer base {
     body {
-        @apply bg-slate-900 font-body px-5;
+        @apply bg-slate-900 font-body px-5 text-white;
     }
 }
 
@@ -20,5 +20,9 @@
     }
     .banner .swiper {
         height: 100%;
+    }
+    .similar .swiper-slide {
+        width: 250px;
+        height: auto;
     }
 }
