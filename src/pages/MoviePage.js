@@ -1,21 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { fetcher } from '../config';
 import useSWR from 'swr';
 import MovieCard from '../components/movie/MovieCard';
+import UseDebounceSN from '../hooks/UseDebounceSN';
+import HashLoader from "react-spinners/HashLoader";
+
+const urlDefault = `https://api.themoviedb.org/3/movie/popular`
 
 const MoviePage = () => {
+    const [searchText, setSearchText] = useState('');
+    const [url, setUrl] = useState(urlDefault);
     const { data, error, isLoading } = useSWR(
-        `https://api.themoviedb.org/3/movie/popular`,
+        url,
         fetcher
     );
 
     const movies = data?.results
+    const debounceValue = UseDebounceSN(searchText, 500)
+    const handleChangeSearch = (e) => {
+        setSearchText(e.target.value)
+    }
+
+    useEffect(() => {
+        if (debounceValue) {
+            setUrl(`https://api.themoviedb.org/3/search/movie?query=${debounceValue}`)
+        } else {
+            setUrl(urlDefault)
+        }
+    }, [debounceValue]);
+
     return (
         <div className='page-container mb-20'>
             <div className="flex mb-10 px-72">
                 <div className="flex-1 ">
                     <input type="text" placeholder='Type here to search...'
                         className='w-full bg-slate-800 p-3 outline-none rounded-l-md text-white focus:bg-slate-700'
+                        onChange={(e) => handleChangeSearch(e)}
                     />
                 </div>
                 <button className=' bg-primary text-white rounded-r-md w-[50px] flex items-center justify-center hover:bg-pink-800 transition-all'>
@@ -24,8 +44,26 @@ const MoviePage = () => {
                     </svg>
                 </button>
             </div>
-            <div className="grid grid-cols-4 gap-10 text-white">
-                {movies?.length > 0 && movies.map((movie) => <MovieCard key={movie.id} movie={movie}></MovieCard>)}
+            {!isLoading ?
+                <div className="grid grid-cols-4 gap-10 text-white">
+                    {movies?.length > 0 && movies.map((movie) => <MovieCard key={movie.id} movie={movie}></MovieCard>)}
+                </div>
+                :
+                <div className='flex justify-center items-center h-[35vh]'>
+
+                    <HashLoader color="#ac36d6" />
+                </div>
+            }
+            <div className="flex justify-center items-center mt-10">
+                <span className='cursor-pointer'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+                </span>
+                <span className='cursor-pointer mx-3 px-3 py-2 leading-none bg-slate-50 text-slate-800 rounded-lg font-bold'>1</span>
+                <span className='cursor-pointer'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+                </span>
             </div>
         </div>
     );
