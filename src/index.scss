@@ -25,4 +25,14 @@
         width: 250px;
         height: auto;
     }
+    .paginationSN > ul {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.5rem;
+        .selected {
+            @apply text-primary;
+        }
+    }
 }

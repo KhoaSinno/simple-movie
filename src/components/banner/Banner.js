@@ -2,6 +2,8 @@ import React from 'react';
 import { fetcher } from '../../config';
 import useSWR from 'swr';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import Button from '../button/Button';
+import { useNavigate } from "react-router-dom";
 
 
 const Banner = () => {
@@ -26,7 +28,9 @@ const Banner = () => {
 };
 
 const BannerItem = ({ banner }) => {
-    const { title, poster_path } = banner
+    const { title, poster_path, id } = banner
+    const navigate = useNavigate();
+
     return (
         <div className="w-full h-full rounded-lg relative">
             <div className="overlay absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.5)] to-[rgba(0,0,0,0.5)] rounded-lg"></div>
@@ -40,7 +44,10 @@ const BannerItem = ({ banner }) => {
                     <span className='py-2 px-4 border border-white rounded-md'>Advengers</span>
                     <span className='py-2 px-4 border border-white rounded-md'>Advengers</span>
                 </div>
-                <button className='font-medium px-6 py-3 bg-primary rounded-lg'>Watch Now!</button>
+                <Button
+                    onClickId={() => navigate(`/movie/${id}`)}
+                    bgColor='primary'
+                >Watch Now!</Button>
             </div>
         </div>
     );

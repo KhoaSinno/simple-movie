@@ -4,30 +4,46 @@ import useSWR from 'swr';
 import MovieCard from '../components/movie/MovieCard';
 import UseDebounceSN from '../hooks/UseDebounceSN';
 import HashLoader from "react-spinners/HashLoader";
-
-const urlDefault = `https://api.themoviedb.org/3/movie/popular`
+import ReactPaginate from 'react-paginate';
 
 const MoviePage = () => {
     const [searchText, setSearchText] = useState('');
-    const [url, setUrl] = useState(urlDefault);
-    const { data, error, isLoading } = useSWR(
+    const [pageOfNumber, setPageOfNumber] = useState(1);
+    const [url, setUrl] = useState(`https://api.themoviedb.org/3/movie/popular?page=${pageOfNumber}`);
+    const [pageCount, setPageCount] = useState(500);
+    const { data, isLoading } = useSWR(
         url,
         fetcher
     );
-
     const movies = data?.results
-    const debounceValue = UseDebounceSN(searchText, 500)
+    const debounceValue = UseDebounceSN(searchText, 700)
     const handleChangeSearch = (e) => {
         setSearchText(e.target.value)
     }
 
     useEffect(() => {
         if (debounceValue) {
-            setUrl(`https://api.themoviedb.org/3/search/movie?query=${debounceValue}`)
+            setUrl(`https://api.themoviedb.org/3/search/movie?query=${debounceValue}&page=${pageOfNumber}`)
+            setPageCount(Math.ceil(+data?.total_results / 20))
         } else {
-            setUrl(urlDefault)
+            setUrl(`https://api.themoviedb.org/3/movie/popular?page=${pageOfNumber}`)
+            setPageCount(500)
         }
-    }, [debounceValue]);
+    }, [data?.total_results, debounceValue, pageOfNumber]);
+
+    // but aip of movie DB will limit 500 page count
+    // const pageCount = Math.ceil(+data?.total_results / 20);
+
+
+    const handlePageClick = (event) => {
+        setPageOfNumber(event.selected + 1)
+        // const newOffset = (event.selected * itemsPerPage) % items.length;
+        // console.log(
+        //     `User requested page number ${event.selected}, which is offset ${newOffset}`
+        // );
+        // setItemOffset(newOffset);
+    };
+
 
     return (
         <div className='page-container mb-20'>
@@ -54,16 +70,16 @@ const MoviePage = () => {
                     <HashLoader color="#ac36d6" />
                 </div>
             }
-            <div className="flex justify-center items-center mt-10">
-                <span className='cursor-pointer'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                </svg>
-                </span>
-                <span className='cursor-pointer mx-3 px-3 py-2 leading-none bg-slate-50 text-slate-800 rounded-lg font-bold'>1</span>
-                <span className='cursor-pointer'><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                </svg>
-                </span>
+            <div className='paginationSN mt-10 select-none'>
+                <ReactPaginate
+                    breakLabel="..."
+                    nextLabel=">"
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={2}
+                    pageCount={pageCount}
+                    previousLabel="<"
+                    renderOnZeroPageCount={null}
+                />
             </div>
         </div>
     );
