@@ -1,17 +1,17 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import MovieCard from './MovieCard';
-import useSWR from 'swr';
-import { fetcher } from '../../config.js'
+import UseFetchMovie from '../../hooks/UseFetchMovie.js';
 
 
 const MovieList = ({ type = 'now_playing' }) => {
-    const { data, error, isLoading } = useSWR(
-        `https://api.themoviedb.org/3/movie/${type}`,
-        fetcher
-    );
+    // const { data, error, isLoading } = useSWR(
+    //     `https://api.themoviedb.org/3/movie/${type}`,
+    //     fetcher
+    // );
+    const { dataMovie, error, isLoading } = UseFetchMovie(`movie/${type}`)
+    const movies = dataMovie?.results
 
-    const movies = data?.results
     return (
         <div className="movies">
             <Swiper

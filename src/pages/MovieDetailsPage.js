@@ -1,23 +1,21 @@
 import React from 'react';
 import { useParams } from 'react-router-dom'
-import { fetcher } from '../config';
-import useSWR from 'swr';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import MovieCard from '../components/movie/MovieCard';
 import { useNavigate } from "react-router-dom";
-
+import UseFetchMovie from '../hooks/UseFetchMovie';
 
 
 const MovieDetailsPage = () => {
     const { movieId } = useParams()
-    const { data, error, isLoading } = useSWR(
-        `https://api.themoviedb.org/3/movie/${movieId}`,
-        fetcher
-    );
+    // const { data, error, isLoading } = useSWR(
+    //     `https://api.themoviedb.org/3/movie/${movieId}`,
+    //     fetcher
+    // );
+    const { dataMovie, error, isLoading } = UseFetchMovie(`movie/${movieId}`)
 
-    console.log("🚀 ~ file: MovieDetailsPage.js:13 ~ MovieDetailsPage ~ data:", data)
-    if (!data) return null
-    const { poster_path, title, genres, overview } = data
+    if (!dataMovie) return null
+    const { poster_path, title, genres, overview } = dataMovie
 
     return (
         <div className='pb-20'>
@@ -33,7 +31,7 @@ const MovieDetailsPage = () => {
             <div className="max-w-[900px] m-auto">
                 <h1 className='text-5xl text-center font-bold mb-10'>{title}</h1>
                 <div className="flex justify-center items-center gap-x-6 mb-10">
-                    {genres.length > 0 && genres.map((genre) => <span key={genre.id} className='border border-primary text-primary py-2 px-4 rounded-lg'>{genre.name}</span>)}
+                    {genres?.length > 0 && genres.map((genre) => <span key={genre.id} className='border border-primary text-primary py-2 px-4 rounded-lg'>{genre.name}</span>)}
                 </div>
                 <p className='text-lg text-center leading-relaxed mb-10'>{overview}</p>
                 <CartList movieId={movieId}></CartList>
@@ -48,13 +46,14 @@ const MovieDetailsPage = () => {
 };
 
 const CartList = ({ movieId }) => {
-    const { data, error, isLoading } = useSWR(
-        `https://api.themoviedb.org/3/movie/${movieId}/credits`,
-        fetcher
-    );
-
-    const castes = data?.cast
+    // const { data, error, isLoading } = useSWR(
+    //     `https://api.themoviedb.org/3/movie/${movieId}/credits`,
+    //     fetcher
+    // );
+    const { dataMovie, error, isLoading } = UseFetchMovie(`movie/${movieId}/videos`)
+    const castes = dataMovie?.cast
     if (!castes && castes?.length < 0) return null
+
     return (
         <div className='mb-10'>
             <h1 className='text-5xl text-center font-bold mb-10'>Cast</h1>
@@ -69,28 +68,29 @@ const CartList = ({ movieId }) => {
 }
 
 const Trailer = ({ movieId }) => {
-    const { data, error, isLoading } = useSWR(
-        `https://api.themoviedb.org/3/movie/${movieId}/videos`,
-        fetcher
-    );
+    // const { data, error, isLoading } = useSWR(
+    //     `https://api.themoviedb.org/3/movie/${movieId}/videos`,
+    //     fetcher
+    // );
+    const { dataMovie, error, isLoading } = UseFetchMovie(`movie/${movieId}/videos`)
 
-    const video = (data && data.results) && (data.results[0] || data.results[1])
+    const video = (dataMovie && dataMovie.results) && (dataMovie.results[0] || dataMovie.results[1])
     if (!video) return null
     return (
         <div className='flex justify-center mb-10'>
-            <iframe width="853" height="480" src={`https://www.youtube.com/embed/${video.key}`} title="&#39;Trolls Band Together&#39; with filmmakers | Academy Conversations" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+            <iframe width="853" height="480" src={`https://www.youtube.com/embed/${video.key}`} title="&#39;Trolls Band Together&#39; with filmmakers | Academy Conversations" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
         </div>
     )
 }
 const SimilarList = ({ movieId }) => {
-    const { data, error, isLoading } = useSWR(
-        `https://api.themoviedb.org/3/movie/${movieId}/similar`,
-        fetcher
-    );
-    const similarVideo = (data && data.results) || null
+    // const { data, error, isLoading } = useSWR(
+    //     `https://api.themoviedb.org/3/movie/${movieId}/similar`,
+    //     fetcher
+    // );
+    const { dataMovie, error, isLoading } = UseFetchMovie(`movie/${movieId}/similar`)
+    const similarVideo = (dataMovie && dataMovie.results) || null
     const navigate = useNavigate();
 
-    console.log("🚀 ~ file: MovieDetailsPage.js:89 ~ SimilarList ~ similarVideo:", similarVideo)
     return (
         <div className='similar '>
             <Swiper

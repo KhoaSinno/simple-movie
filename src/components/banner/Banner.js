@@ -1,17 +1,17 @@
 import React from 'react';
-import { fetcher } from '../../config';
-import useSWR from 'swr';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Button from '../button/Button';
 import { useNavigate } from "react-router-dom";
+import UseFetchMovie from '../../hooks/UseFetchMovie';
 
 
 const Banner = () => {
-    const { data, error, isLoading } = useSWR(
-        `https://api.themoviedb.org/3/movie/upcoming`,
-        fetcher
-    );
-    const banners = data?.results || []
+    // const { data, error, isLoading } = useSWR(
+    //     `https://api.themoviedb.org/3/movie/upcoming`,
+    //     fetcher
+    // );
+    const { dataMovie, error, isLoading } = UseFetchMovie(`movie/upcoming`)
+    const banners = dataMovie?.results || []
     return (
         <section className='banner h-[500px] page-container'>
             <Swiper

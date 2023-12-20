@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { fetcher } from '../config';
-import useSWR from 'swr';
 import MovieCard from '../components/movie/MovieCard';
 import UseDebounceSN from '../hooks/UseDebounceSN';
 import HashLoader from "react-spinners/HashLoader";
 import ReactPaginate from 'react-paginate';
+import UseFetchMovie from '../hooks/UseFetchMovie';
 
 const MoviePage = () => {
     const [searchText, setSearchText] = useState('');
     const [pageOfNumber, setPageOfNumber] = useState(1);
-    const [url, setUrl] = useState(`https://api.themoviedb.org/3/movie/popular?page=${pageOfNumber}`);
+    const [url, setUrl] = useState(`movie/popular?page=${pageOfNumber}`);
     const [pageCount, setPageCount] = useState(500);
-    const { data, isLoading } = useSWR(
-        url,
-        fetcher
-    );
-    const movies = data?.results
+
+    // const { data, isLoading } = useSWR(
+    //     url,
+    //     fetcher
+    // );
+    const { dataMovie, error, isLoading } = UseFetchMovie(url)
+    const movies = dataMovie?.results
     const debounceValue = UseDebounceSN(searchText, 700)
     const handleChangeSearch = (e) => {
         setSearchText(e.target.value)
@@ -23,13 +24,13 @@ const MoviePage = () => {
 
     useEffect(() => {
         if (debounceValue) {
-            setUrl(`https://api.themoviedb.org/3/search/movie?query=${debounceValue}&page=${pageOfNumber}`)
-            setPageCount(Math.ceil(+data?.total_results / 20))
+            setUrl(`search/movie?query=${debounceValue}&page=${pageOfNumber}`)
+            setPageCount(Math.ceil(+dataMovie?.total_results / 20))
         } else {
-            setUrl(`https://api.themoviedb.org/3/movie/popular?page=${pageOfNumber}`)
+            setUrl(`movie/popular?page=${pageOfNumber}`)
             setPageCount(500)
         }
-    }, [data?.total_results, debounceValue, pageOfNumber]);
+    }, [dataMovie?.total_results, debounceValue, pageOfNumber]);
 
     // but aip of movie DB will limit 500 page count
     // const pageCount = Math.ceil(+data?.total_results / 20);
