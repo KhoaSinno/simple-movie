@@ -1,7 +1,7 @@
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import MovieCard from './MovieCard';
-import UseFetchMovie from '../../hooks/UseFetchMovie.js';
+import UseFetchMovie from 'hooks/UseFetchMovie.js';
 
 
 const MovieList = ({ type = 'now_playing' }) => {

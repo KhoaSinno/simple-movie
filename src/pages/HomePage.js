@@ -1,6 +1,6 @@
 import React from 'react';
-import Banner from '../components/banner/Banner';
-import MovieList from '../components/movie/MovieList';
+import Banner from 'components/banner/Banner';
+import MovieList from 'components/movie/MovieList';
 
 const HomePage = () => {
     return (

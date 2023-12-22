@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import MovieCard from '../components/movie/MovieCard';
-import UseDebounceSN from '../hooks/UseDebounceSN';
+import MovieCard from 'components/movie/MovieCard';
+import UseDebounceSN from 'hooks/UseDebounceSN';
 import HashLoader from "react-spinners/HashLoader";
 import ReactPaginate from 'react-paginate';
-import UseFetchMovie from '../hooks/UseFetchMovie';
+import UseFetchMovie from 'hooks/UseFetchMovie';
 
 const MoviePage = () => {
     const [searchText, setSearchText] = useState('');

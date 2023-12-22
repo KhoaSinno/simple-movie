@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react';
-import MovieCard from '../components/movie/MovieCard';
 import { useNavigate } from "react-router-dom";
-import UseFetchMovie from '../hooks/UseFetchMovie';
+import MovieCard from 'components/movie/MovieCard';
+import UseFetchMovie from 'hooks/UseFetchMovie';
 
 
 const MovieDetailsPage = () => {
