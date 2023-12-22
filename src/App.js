@@ -18,10 +18,7 @@ function App() {
 
   return (
     <>
-      <Suspense fallback={<div className='flex justify-center items-center h-[35vh]'>
-
-        <HashLoader color="#ac36d6" />
-      </div>}>
+      <Suspense fallback={<div></div>}>
         <Routes>
           <Route path='/' element={<Main></Main>}>
             <Route path='/' element={<HomePage></HomePage>}></Route>

@@ -2,7 +2,9 @@ import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import MovieCard from './MovieCard';
 import UseFetchMovie from 'hooks/UseFetchMovie.js';
-
+import PropTypes from 'prop-types';
+import { withErrorBoundary } from 'react-error-boundary'
+import { MovieListSkeleton } from 'components/loading/LoadingSkeleton'
 
 const MovieList = ({ type = 'now_playing' }) => {
     // const { data, error, isLoading } = useSWR(
@@ -27,4 +29,17 @@ const MovieList = ({ type = 'now_playing' }) => {
     );
 };
 
-export default MovieList;
+// export default MovieList;
+
+const MovieListWithErrorBoundary = withErrorBoundary(MovieList, {
+    fallback: <MovieListSkeleton></MovieListSkeleton>,
+    onError(error, info) {
+        console.log(error)
+    },
+})
+
+export default MovieListWithErrorBoundary
+
+MovieList.propTypes = {
+    type: PropTypes.string,
+}

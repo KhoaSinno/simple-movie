@@ -1,6 +1,9 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
 import Button from 'components/button/Button';
+import PropTypes from 'prop-types';
+import { withErrorBoundary } from 'react-error-boundary'
+import { CardSkeleton } from 'components/loading/LoadingSkeleton'
 
 const MovieCard = ({ movie }) => {
     const {
@@ -27,4 +30,20 @@ const MovieCard = ({ movie }) => {
     );
 };
 
-export default MovieCard;
+// export default MovieCard;
+const MovieCardWithErrorBoundary = withErrorBoundary(MovieCard, {
+    fallback: <CardSkeleton></CardSkeleton>,
+    onError(error, info) {
+        console.log(error)
+    },
+})
+
+export default MovieCardWithErrorBoundary
+
+MovieCard.propTypes = {
+    title: PropTypes.string,
+    release_date: PropTypes.instanceOf(Date),
+    vote_average: PropTypes.number,
+    poster_path: PropTypes.string,
+    id: PropTypes.number
+}

@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import Button from '../button/Button';
 import { useNavigate } from "react-router-dom";
 import UseFetchMovie from '../../hooks/UseFetchMovie';
+import { BannerSkeleton } from 'components/loading/LoadingSkeleton'
 
 
 const Banner = () => {
@@ -13,17 +14,26 @@ const Banner = () => {
     const { dataMovie, error, isLoading } = UseFetchMovie(`movie/upcoming`)
     const banners = dataMovie?.results || []
     return (
-        <section className='banner h-[500px] page-container'>
-            <Swiper
-                grabCursor={'true'}
-                spaceBetween={25}
-                slidesPerView={'auto'}
-            >
-                {banners?.length > 0 && banners.map((banner) => (
-                    <SwiperSlide key={banner.id}><BannerItem banner={banner}></BannerItem></SwiperSlide>
-                ))}
-            </Swiper>
-        </section>
+        <>
+            {!isLoading ?
+                <section className='banner h-[500px] page-container'>
+                    <Swiper
+                        grabCursor={'true'}
+                        spaceBetween={25}
+                        slidesPerView={'auto'}
+                    >
+                        {
+                            banners?.length > 0 && banners.map((banner) => {
+                                return (
+                                    <SwiperSlide key={banner.id}>
+                                        <BannerItem banner={banner}></BannerItem>
+                                    </SwiperSlide>
+                                )
+                            })
+                        }
+                    </Swiper>
+                </section> : <BannerSkeleton></BannerSkeleton>}
+        </>
     );
 };
 
@@ -32,7 +42,7 @@ const BannerItem = ({ banner }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="w-full h-full rounded-lg relative">
+        <div className="w-full h-full rounded-lg relative select-none">
             <div className="overlay absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.5)] to-[rgba(0,0,0,0.5)] rounded-lg"></div>
             <img src={`https://image.tmdb.org/t/p/original/${poster_path}`} alt=""
                 className='h-full w-full object-cover rounded-lg'

@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { useNavigate } from "react-router-dom";
 import MovieCard from 'components/movie/MovieCard';
 import UseFetchMovie from 'hooks/UseFetchMovie';
-
+import PropTypes from 'prop-types';
 
 const MovieDetailsPage = () => {
     const { movieId } = useParams()
@@ -16,7 +16,6 @@ const MovieDetailsPage = () => {
 
     if (!dataMovie) return null
     const { poster_path, title, genres, overview } = dataMovie
-
     return (
         <div className='pb-20'>
             <div className="relative w-full h-[600px] rounded-md">
@@ -34,11 +33,11 @@ const MovieDetailsPage = () => {
                     {genres?.length > 0 && genres.map((genre) => <span key={genre.id} className='border border-primary text-primary py-2 px-4 rounded-lg'>{genre.name}</span>)}
                 </div>
                 <p className='text-lg text-center leading-relaxed mb-10'>{overview}</p>
-                <CartList movieId={movieId}></CartList>
-                <Trailer movieId={movieId}></Trailer>
+                <CartList movieId={+movieId}></CartList>
+                <Trailer movieId={+movieId}></Trailer>
             </div>
             <div className="max-w-[1100px] m-auto">
-                <SimilarList movieId={movieId}></SimilarList>
+                <SimilarList movieId={+movieId}></SimilarList>
             </div>
 
         </div>
@@ -67,6 +66,11 @@ const CartList = ({ movieId }) => {
         </div>)
 }
 
+CartList.propTypes = {
+    movieId: PropTypes.number.isRequired
+};
+
+
 const Trailer = ({ movieId }) => {
     // const { data, error, isLoading } = useSWR(
     //     `https://api.themoviedb.org/3/movie/${movieId}/videos`,
@@ -82,6 +86,12 @@ const Trailer = ({ movieId }) => {
         </div>
     )
 }
+
+Trailer.propTypes = {
+    movieId: PropTypes.number.isRequired
+};
+
+
 const SimilarList = ({ movieId }) => {
     // const { data, error, isLoading } = useSWR(
     //     `https://api.themoviedb.org/3/movie/${movieId}/similar`,
@@ -110,4 +120,9 @@ const SimilarList = ({ movieId }) => {
         </div>
     )
 }
+
+SimilarList.propTypes = {
+    movieId: PropTypes.number.isRequired
+};
+
 export default MovieDetailsPage;

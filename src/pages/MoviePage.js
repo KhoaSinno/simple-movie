@@ -49,7 +49,7 @@ const MoviePage = () => {
     return (
         <div className='page-container mb-20'>
             <div className="flex mb-10 px-72">
-                <div className="flex-1 ">
+                <div className="flex-1 select-none">
                     <input type="text" placeholder='Type here to search...'
                         className='w-full bg-slate-800 p-3 outline-none rounded-l-md text-white focus:bg-slate-700'
                         onChange={(e) => handleChangeSearch(e)}
