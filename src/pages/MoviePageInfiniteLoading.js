@@ -11,8 +11,8 @@ const PAGE_SIZE = 20
 
 const MoviePageInfiniteLoading = () => {
     const [searchText, setSearchText] = useState('');
-    const [pageOfNumber, setPageOfNumber] = useState(1);
-    const [url, setUrl] = useState(`movie/popular?page=${pageOfNumber}`);
+    // const [pageOfNumber, setPageOfNumber] = useState(1);
+    const [url, setUrl] = useState(`movie/popular?page=1`);
     const [pageCount, setPageCount] = useState(500);
 
     const {
@@ -37,13 +37,13 @@ const MoviePageInfiniteLoading = () => {
 
     useEffect(() => {
         if (debounceValue) {
-            setUrl(`https://api.themoviedb.org/3/search/movie?query=${debounceValue}&page=${pageOfNumber}`)
+            setUrl(`https://api.themoviedb.org/3/search/movie?query=${debounceValue}&page=1`)
             setPageCount(Math.ceil(+data?.[0]?.total_results / 20))
         } else {
-            setUrl(`https://api.themoviedb.org/3/movie/popular?page=${pageOfNumber}`)
+            setUrl(`https://api.themoviedb.org/3/movie/popular?page=1`)
             setPageCount(500)
         }
-    }, [data, debounceValue, pageOfNumber]);
+    }, [data, debounceValue]);
 
     return (
         <div className='page-container mb-20'>
@@ -61,19 +61,22 @@ const MoviePageInfiniteLoading = () => {
                 </button>
             </div>
             {!isLoading ?
-                <div className="grid grid-cols-4 gap-10 text-white mb-10">
-                    {movies?.length > 0 && movies.map((movie) => <MovieCard key={movie.id} movie={movie}></MovieCard>)}
-                </div>
+                <>
+                    <div className="grid grid-cols-4 gap-10 text-white">
+                        {movies?.length > 0 && movies.map((movie) => <MovieCard key={movie.id} movie={movie}></MovieCard>)}
+                    </div>
+                    <div className="flex justify-center items-center mt-10">
+                        <Button className={isReachingEnd ? 'bg-slate-400 text-slate-600' : ''}
+                            onClickId={() => setSize(size + 1)}
+                            disable={isReachingEnd}
+                            bgColor={!isReachingEnd ? 'primary' : ''}
+                        >Load more...</Button>
+                    </div>
+                </>
                 :
                 <MoviePageList></MoviePageList>
             }
-            <div className="flex justify-center items-center">
-                <Button className={isReachingEnd ? 'bg-slate-400 text-slate-600' : ''}
-                    onClickId={() => setSize(size + 1)}
-                    disable={isReachingEnd}
-                    bgColor=''
-                >Load more...</Button>
-            </div>
+
         </div>
     );
 };
