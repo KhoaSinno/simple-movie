@@ -62,3 +62,8 @@ export const BannerSkeleton = () =>
             </SwiperSlide>
         </Swiper>
     </section>
+
+export const MoviePageList = () =>
+    <div className="MoviePageList grid grid-cols-4 gap-10 text-white">
+        {new Array(20).fill(0).map((index) => <CardSkeleton key={index} ></CardSkeleton>)}
+    </div>

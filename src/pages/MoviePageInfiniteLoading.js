@@ -1,22 +1,35 @@
 import React, { useEffect, useState } from 'react';
 import MovieCard from 'components/movie/MovieCard';
 import UseDebounceSN from 'hooks/UseDebounceSN';
-import ReactPaginate from 'react-paginate';
 import UseFetchMovie from 'hooks/UseFetchMovie';
 import { MoviePageList } from 'components/loading/LoadingSkeleton'
+import Button from 'components/button/Button';
+import useSWRInfinite from "swr/infinite";
+import { fetcher } from 'config';
 
-const MoviePage = () => {
+const PAGE_SIZE = 20
+
+const MoviePageInfiniteLoading = () => {
     const [searchText, setSearchText] = useState('');
     const [pageOfNumber, setPageOfNumber] = useState(1);
     const [url, setUrl] = useState(`movie/popular?page=${pageOfNumber}`);
     const [pageCount, setPageCount] = useState(500);
 
-    // const { data, isLoading } = useSWR(
-    //     url,
-    //     fetcher
-    // );
-    const { dataMovie, error, isLoading } = UseFetchMovie(url)
-    const movies = dataMovie?.results
+    const {
+        data,
+        size,
+        setSize,
+        isLoading
+    } = useSWRInfinite(
+        (index) =>
+            `${url.replace('page=1', `page=${index + 1}`)}`,
+        fetcher
+    );
+
+    const movies = data ? data.reduce((a, b) => a.concat(b.results), []) : []
+    const isEmpty = data?.[0]?.results.length === 0
+    const isReachingEnd = isEmpty || (data && data[data.length - 1]?.results.length < PAGE_SIZE);
+
     const debounceValue = UseDebounceSN(searchText, 700)
     const handleChangeSearch = (e) => {
         setSearchText(e.target.value)
@@ -24,27 +37,13 @@ const MoviePage = () => {
 
     useEffect(() => {
         if (debounceValue) {
-            setUrl(`search/movie?query=${debounceValue}&page=${pageOfNumber}`)
-            setPageCount(Math.ceil(+dataMovie?.total_results / 20))
+            setUrl(`https://api.themoviedb.org/3/search/movie?query=${debounceValue}&page=${pageOfNumber}`)
+            setPageCount(Math.ceil(+data?.[0]?.total_results / 20))
         } else {
-            setUrl(`movie/popular?page=${pageOfNumber}`)
+            setUrl(`https://api.themoviedb.org/3/movie/popular?page=${pageOfNumber}`)
             setPageCount(500)
         }
-    }, [dataMovie?.total_results, debounceValue, pageOfNumber]);
-
-    // but aip of movie DB will limit 500 page count
-    // const pageCount = Math.ceil(+data?.total_results / 20);
-
-
-    const handlePageClick = (event) => {
-        setPageOfNumber(event.selected + 1)
-        // const newOffset = (event.selected * itemsPerPage) % items.length;
-        // console.log(
-        //     `User requested page number ${event.selected}, which is offset ${newOffset}`
-        // );
-        // setItemOffset(newOffset);
-    };
-
+    }, [data, debounceValue, pageOfNumber]);
 
     return (
         <div className='page-container mb-20'>
@@ -62,25 +61,21 @@ const MoviePage = () => {
                 </button>
             </div>
             {!isLoading ?
-                <div className="grid grid-cols-4 gap-10 text-white">
+                <div className="grid grid-cols-4 gap-10 text-white mb-10">
                     {movies?.length > 0 && movies.map((movie) => <MovieCard key={movie.id} movie={movie}></MovieCard>)}
                 </div>
                 :
                 <MoviePageList></MoviePageList>
             }
-            <div className='paginationSN mt-10 select-none'>
-                <ReactPaginate
-                    breakLabel="..."
-                    nextLabel=">"
-                    onPageChange={handlePageClick}
-                    pageRangeDisplayed={2}
-                    pageCount={pageCount}
-                    previousLabel="<"
-                    renderOnZeroPageCount={null}
-                />
+            <div className="flex justify-center items-center">
+                <Button className={isReachingEnd ? 'bg-slate-400 text-slate-600' : ''}
+                    onClickId={() => setSize(size + 1)}
+                    disable={isReachingEnd}
+                    bgColor=''
+                >Load more...</Button>
             </div>
         </div>
     );
 };
 
-export default MoviePage;
+export default MoviePageInfiniteLoading;
